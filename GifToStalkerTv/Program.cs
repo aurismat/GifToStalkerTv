@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Diagnostics;
+using System.Drawing;
 
 namespace GifToStalkerTv
 {
@@ -162,6 +163,17 @@ namespace GifToStalkerTv
             Directory.CreateDirectory("gamedata/textures/fx");
         }
 
+        static int getFPS(string path)
+        {
+            Image img = Image.FromFile(path);
+            var framePropItem = img.GetPropertyItem(0x5100);
+            byte[] delayRawData = framePropItem.Value;
+            string delay = string.Format("{0}{1}", delayRawData[0], delayRawData[1]);
+            int del = int.Parse(delay);
+
+            return 1000 / del;
+        }
+
         static void Main(string[] args)
         {
             Printer prnt = new Printer();
@@ -172,10 +184,21 @@ namespace GifToStalkerTv
             //check if we have ffmpeg and magick
             testForFFMPEG();
 
-            //validate args
+            //validate filename arg
             testForArg1File(args[0]);
+
+            //use FPS override if stated in args, otherwise find it yourself
             if (args.Length == 2)
+            {
                 testForArg2Int(args[1], out fps);
+                prnt.info("FPS override arg found");
+            }
+            else
+            {
+                fps = getFPS(args[0]);
+                prnt.info("FPS override not found, parsing it from .gif");
+            }
+            prnt.info("Framerate: " + fps);
 
             //cleanup and generate directory structure required
             prnt.info("Cleaning up from previous usage if needed...");
