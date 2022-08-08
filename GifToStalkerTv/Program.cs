@@ -1,16 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Drawing.Imaging;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GifToStalkerTv
 {
-
     internal class Program
     {
         /// <summary>
@@ -118,6 +111,9 @@ namespace GifToStalkerTv
             }
         }
 
+        /// <summary>
+        /// Converts .png's to a suitable .dds formatted files, suitable for STALKER.
+        /// </summary>
         static void convertPngsToDdsList()
         {
             Process p = new Process();
@@ -142,6 +138,10 @@ namespace GifToStalkerTv
             }
         }
 
+        /// <summary>
+        /// cleans up all folders after/before using the program
+        /// </summary>
+        /// <param name="includeGamedata">Delete the final output folder(gamedata)?</param>
         static void cleanup(bool includeGamedata = false)
         {
             if (Directory.Exists("gamedata") && includeGamedata)
@@ -152,6 +152,9 @@ namespace GifToStalkerTv
                 Directory.Delete("output", true);
         }
 
+        /// <summary>
+        /// Generates the directory structure used by the program.
+        /// </summary>
         static void generateDirStructure()
         {
             Directory.CreateDirectory("_temp");
@@ -190,11 +193,12 @@ namespace GifToStalkerTv
             prnt.info("Done creating .dds files!");
             prnt.info("Generating .seq file...");
 
+            //get all .dds filenames without extensions into an array
             string[] ddsArray = Directory.GetFiles("output");
-
             for (int i = 0; i < ddsArray.Length; i++)
                 ddsArray[i] = Path.GetFileNameWithoutExtension(ddsArray[i]);
 
+            //write fps and all .dds filename references to .seq file
             using (StreamWriter writer = new StreamWriter("output/fx_stalker.seq"))
             {
                 writer.WriteLine(fps);
@@ -205,6 +209,7 @@ namespace GifToStalkerTv
             prnt.info(".seq file generated!");
             prnt.info("Final moving of all created files...");
 
+            //final copy to the gamedata folder
             foreach (string filePath in Directory.GetFiles("output"))
             {
                 string filename = Path.GetFileName(filePath);
