@@ -76,9 +76,9 @@ namespace GifToStalkerTv
         static void testForArg2Int(string arg, out int fps)
         {
             if (!int.TryParse(arg, out fps))
-            {
                 help("Argument 2 must be an integer");
-            }
+            if (fps < 1 || fps > 60)
+                help("Framerate must be between 1 and 60(inclusive)!");
         }
 
         /// <summary>
