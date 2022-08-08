@@ -170,6 +170,8 @@ namespace GifToStalkerTv
             byte[] delayRawData = framePropItem.Value;
             string delay = string.Format("{0}{1}", delayRawData[0], delayRawData[1]);
             int del = int.Parse(delay);
+            if (del > 1000)
+                return 1;
 
             return 1000 / del;
         }
